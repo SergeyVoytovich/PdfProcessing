@@ -34,15 +34,20 @@ internal class Context : DbContext, IContext
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
 		var entities = ChangeTracker.Entries<EntityBase>();
-		await ProvideAuditAsync(entities);
+		await ProvideAuditAsync(entities, cancellationToken);
 
         return await base.SaveChangesAsync(cancellationToken);
     }
 
-	protected virtual async Task ProvideAuditAsync(IEnumerable<EntityEntry<EntityBase>> entires)
+	protected virtual async Task ProvideAuditAsync(IEnumerable<EntityEntry<EntityBase>> entires, CancellationToken cancellationToken = default)
 	{
 		foreach (var entiry in entires)
 		{
+			if(cancellationToken.IsCancellationRequested)
+			{
+				return;
+			}
+
 			await ProvideAuditAsync(entiry);
         }
     }
@@ -72,5 +77,5 @@ internal class Context : DbContext, IContext
         }
     }
 
-	public Task SaveAsync() => SaveChangesAsync();
+	public Task SaveAsync(CancellationToken cancellationToken) => SaveChangesAsync(cancellationToken);
 }

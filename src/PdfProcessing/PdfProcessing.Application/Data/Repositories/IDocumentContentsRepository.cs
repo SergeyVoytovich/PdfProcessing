@@ -10,7 +10,7 @@ namespace PdfProcessing.Application.Data.Repositories;
 /// if the requested document does not exist.</remarks>
 public interface IDocumentContentsRepository
 {
-    Task<IList<DocumentContent>> GetByDocumentIdAsync(Guid documentId);
+    Task<IList<DocumentContent>> GetByDocumentIdAsync(Guid documentId, CancellationToken cancellationToken = default);
 
-    Task AddAsync(DocumentContent domain);
+    Task AddAsync(DocumentContent domain, CancellationToken cancellationToken = default);
 }

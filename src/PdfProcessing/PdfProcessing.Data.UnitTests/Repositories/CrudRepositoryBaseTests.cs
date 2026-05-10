@@ -13,11 +13,14 @@ public class CrudRepositoryBaseTests
     private sealed class TestCrudRepository(Context context, IMapper mapper)
         : CrudRepositoryBase<Document, DocumentEntity>(context, mapper, c => c.Documents)
     {
-        public Task Add(Document document) => AddAsync(document);
+        public Task Add(Document document, CancellationToken cancellationToken = default)
+            => AddAsync(document, cancellationToken);
 
-        public Task Update(Document document) => UpdateAsync(document);
+        public Task Update(Document document, CancellationToken cancellationToken = default)
+            => UpdateAsync(document, cancellationToken);
 
-        public Task Delete(Guid id) => DeleteAsync(id);
+        public Task Delete(Guid id, CancellationToken cancellationToken = default)
+            => DeleteAsync(id, cancellationToken);
     }
 
     private static IMapper CreateMapper()
@@ -70,7 +73,7 @@ public class CrudRepositoryBaseTests
         var repository = CreateRepository(context);
         var document = CreateDocument(DocumentState.Processing);
 
-        await repository.Add(document);
+        await repository.Add(document, CancellationToken.None);
 
         var entity = await context.Documents.SingleAsync();
         Assert.Equal(document.Id, entity.Id);
@@ -85,7 +88,7 @@ public class CrudRepositoryBaseTests
         await using var context = CreateContext();
         var entity = CreateEntity(DocumentState.Received);
         await context.Documents.AddAsync(entity);
-        await context.SaveAsync();
+        await context.SaveAsync(CancellationToken.None);
         var repository = CreateRepository(context);
         var document = new Document
         {
@@ -95,7 +98,7 @@ public class CrudRepositoryBaseTests
             State = DocumentState.Processed
         };
 
-        await repository.Update(document);
+        await repository.Update(document, CancellationToken.None);
 
         var updated = await context.Documents.SingleAsync(i => i.Id == entity.Id);
         Assert.Equal(document.DisplayName, updated.DisplayName);
@@ -109,7 +112,7 @@ public class CrudRepositoryBaseTests
         await using var context = CreateContext();
         var repository = CreateRepository(context);
 
-        await Assert.ThrowsAsync<EntityNotFoundException>(() => repository.Update(CreateDocument()));
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => repository.Update(CreateDocument(), CancellationToken.None));
     }
 
     [Fact]
@@ -118,10 +121,10 @@ public class CrudRepositoryBaseTests
         await using var context = CreateContext();
         var entity = CreateEntity();
         await context.Documents.AddAsync(entity);
-        await context.SaveAsync();
+        await context.SaveAsync(CancellationToken.None);
         var repository = CreateRepository(context);
 
-        await repository.Delete(entity.Id);
+        await repository.Delete(entity.Id, CancellationToken.None);
 
         var deleted = await context.Documents.SingleAsync(i => i.Id == entity.Id);
         Assert.NotNull(deleted.DeletedAt);
@@ -134,6 +137,6 @@ public class CrudRepositoryBaseTests
         await using var context = CreateContext();
         var repository = CreateRepository(context);
 
-        await Assert.ThrowsAsync<EntityNotFoundException>(() => repository.Delete(Guid.NewGuid()));
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => repository.Delete(Guid.NewGuid(), CancellationToken.None));
     }
 }

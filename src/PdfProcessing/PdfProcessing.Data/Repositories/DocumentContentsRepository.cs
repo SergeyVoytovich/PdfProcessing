@@ -10,11 +10,12 @@ namespace PdfProcessing.Data.Repositories;
 internal class DocumentContentsRepository(IContext context, IMapper mapper)
     : CrudRepositoryBase<DocumentContent, DocumentContentEntity>(context, mapper, c => c.DocumentContents), IDocumentContentsRepository
 {
-    Task IDocumentContentsRepository.AddAsync(DocumentContent domain) => base.AddAsync(domain);
+    Task IDocumentContentsRepository.AddAsync(DocumentContent domain, CancellationToken cancellationToken) 
+        => base.AddAsync(domain, cancellationToken);
 
-    public Task<IList<DocumentContent>> GetByDocumentIdAsync(Guid documentId)
+    public Task<IList<DocumentContent>> GetByDocumentIdAsync(Guid documentId, CancellationToken cancellationToken = default)
         => Context.DocumentContents
             .Where(i => i.DocumentId == documentId)
-            .ToListAsync()
+            .ToListAsync(cancellationToken)
             .MapAsync<DocumentContentEntity, DocumentContent>(Mapper);
 }

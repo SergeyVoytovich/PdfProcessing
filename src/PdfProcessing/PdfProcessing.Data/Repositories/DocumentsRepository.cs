@@ -10,28 +10,31 @@ namespace PdfProcessing.Data.Repositories;
 internal class DocumentsRepository(IContext context, IMapper mapper)
     : CrudRepositoryBase<Document, DocumentEntity>(context, mapper, c => c.Documents), IDocumentsRepository
 {
-    public Task<Document> GetByIdAsync(Guid id)
+    public Task<Document> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         => Context.Documents
                 .ById(id)
-                .SingleOrDefaultAsync()
+                .SingleOrDefaultAsync(cancellationToken)
                 .MapAsync<DocumentEntity, Document>(Mapper);
 
-    public Task<IList<Document>> GetByState(DocumentState state) 
+    public Task<IList<Document>> GetByState(DocumentState state, CancellationToken cancellationToken = default) 
         => Context.Documents
                 .Where(i => i.State == (int)state)
-                .ToListAsync()
+                .ToListAsync(cancellationToken)
                 .MapAsync<DocumentEntity, Document>(Mapper);
 
-    Task IDocumentsRepository.AddAsync(Document document) => base.AddAsync(document);
+    Task IDocumentsRepository.AddAsync(Document document, CancellationToken cancellationToken)
+        => base.AddAsync(document, cancellationToken);
 
-    Task IDocumentsRepository.UpdateAsync(Document document) => base.UpdateAsync(document);
+    Task IDocumentsRepository.UpdateAsync(Document document, CancellationToken cancellationToken)
+        => base.UpdateAsync(document, cancellationToken);
 
-    Task IDocumentsRepository.DeleteAsync(Guid id) => base.DeleteAsync(id);
+    Task IDocumentsRepository.DeleteAsync(Guid id, CancellationToken cancellationToken) 
+        => base.DeleteAsync(id, cancellationToken);
 
-    public Task<IList<Document>> GetByStates(IList<DocumentState> states)
+    public Task<IList<Document>> GetByStates(IList<DocumentState> states, CancellationToken cancellationToken = default)
         => Context.Documents
                 .AsNoTracking()
                 .Where(i => states.Select(s => (int)s).Contains(i.State))
-                .ToListAsync()
+                .ToListAsync(cancellationToken)
                 .MapAsync<DocumentEntity, Document>(Mapper);
 }

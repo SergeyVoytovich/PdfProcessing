@@ -10,11 +10,10 @@ namespace PdfProcessing.Application.Data.Repositories;
 /// for the underlying data store.</remarks>
 public interface IDocumentsRepository
 {
-    Task<Document> GetByIdAsync(Guid Id);
-    Task<IList<Document>> GetByState(DocumentState state);
-    Task<IList<Document>> GetByStates(IList<DocumentState> states);
+    Task<Document> GetByIdAsync(Guid Id, CancellationToken cancellationToken = default);
+    Task<IList<Document>> GetByStates(IList<DocumentState> states, CancellationToken cancellationToken = default);
 
-    Task AddAsync(Document document);
-    Task UpdateAsync(Document document);
-    Task DeleteAsync(Guid id);
+    Task AddAsync(Document document, CancellationToken cancellationToken = default);
+    Task UpdateAsync(Document document, CancellationToken cancellationToken = default);
+    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

@@ -17,24 +17,24 @@ internal abstract class CrudRepositoryBase<TDomain, TEntity> : RepositoryBase<TD
         DbSet = dbSet(context);
     }
 
-    protected virtual async Task AddAsync(TDomain domain)
+    protected virtual async Task AddAsync(TDomain domain, CancellationToken cancellationToken)
     {
         var entity = ConvertToEntity(domain);
-        await DbSet.AddAsync(entity);
-        await Context.SaveAsync();
+        await DbSet.AddAsync(entity, cancellationToken);
+        await Context.SaveAsync(cancellationToken);
     }
 
-    protected virtual async Task UpdateAsync(TDomain domain)
+    protected virtual async Task UpdateAsync(TDomain domain, CancellationToken cancellationToken)
     {
-        var entity = await DbSet.FindAsync(domain.Id) ?? throw new EntityNotFoundException(domain.Id);
+        var entity = await DbSet.FindAsync(domain.Id, cancellationToken) ?? throw new EntityNotFoundException(domain.Id);
         Mapper.Map(domain, entity);
-        await Context.SaveAsync();
+        await Context.SaveAsync(cancellationToken);
     }
 
-    protected virtual async Task DeleteAsync(Guid id)
+    protected virtual async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await DbSet.FindAsync(id) ?? throw new EntityNotFoundException(id);
+        var entity = await DbSet.FindAsync(id, cancellationToken) ?? throw new EntityNotFoundException(id);
         DbSet.Remove(entity);
-        await Context.SaveAsync();
+        await Context.SaveAsync(cancellationToken);
     }
 }

@@ -8,5 +8,5 @@ internal interface IContext
     DbSet<DocumentEntity> Documents { get; }
     DbSet<DocumentContentEntity> DocumentContents { get; }
 
-    Task SaveAsync();
+    Task SaveAsync(CancellationToken cancellationToken);
 }

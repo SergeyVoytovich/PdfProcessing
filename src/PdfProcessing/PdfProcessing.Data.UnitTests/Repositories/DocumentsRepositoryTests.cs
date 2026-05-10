@@ -50,10 +50,10 @@ public class DocumentsRepositoryTests
         await using var context = CreateContext();
         var entity = CreateEntity(DocumentState.Processed);
         await context.Documents.AddAsync(entity);
-        await context.SaveAsync();
+        await context.SaveAsync(CancellationToken.None);
         var repository = CreateRepository(context);
 
-        var result = await repository.GetByIdAsync(entity.Id);
+        var result = await repository.GetByIdAsync(entity.Id, CancellationToken.None);
 
         Assert.Equal(entity.Id, result.Id);
         Assert.Equal(entity.DisplayName, result.DisplayName);
@@ -67,7 +67,7 @@ public class DocumentsRepositoryTests
         await using var context = CreateContext();
         var repository = CreateRepository(context);
 
-        var result = await repository.GetByIdAsync(Guid.NewGuid());
+        var result = await repository.GetByIdAsync(Guid.NewGuid(), CancellationToken.None);
 
         Assert.Null(result);
     }
@@ -79,10 +79,10 @@ public class DocumentsRepositoryTests
         var processed = CreateEntity(DocumentState.Processed);
         var failed = CreateEntity(DocumentState.Failed);
         await context.Documents.AddRangeAsync(processed, failed);
-        await context.SaveAsync();
+        await context.SaveAsync(CancellationToken.None);
         var repository = CreateRepository(context);
 
-        var result = await repository.GetByState(DocumentState.Processed);
+        var result = await repository.GetByState(DocumentState.Processed, CancellationToken.None);
 
         var document = Assert.Single(result);
         Assert.Equal(processed.Id, document.Id);
@@ -97,10 +97,10 @@ public class DocumentsRepositoryTests
         var processed = CreateEntity(DocumentState.Processed);
         var failed = CreateEntity(DocumentState.Failed);
         await context.Documents.AddRangeAsync(received, processed, failed);
-        await context.SaveAsync();
+        await context.SaveAsync(CancellationToken.None);
         var repository = CreateRepository(context);
 
-        var result = await repository.GetByStates([DocumentState.Received, DocumentState.Processed]);
+        var result = await repository.GetByStates([DocumentState.Received, DocumentState.Processed], CancellationToken.None);
 
         Assert.Equal(2, result.Count);
         Assert.Contains(result, i => i.Id == received.Id && i.State == DocumentState.Received);
@@ -113,10 +113,10 @@ public class DocumentsRepositoryTests
     {
         await using var context = CreateContext();
         await context.Documents.AddAsync(CreateEntity(DocumentState.Processed));
-        await context.SaveAsync();
+        await context.SaveAsync(CancellationToken.None);
         var repository = CreateRepository(context);
 
-        var result = await repository.GetByStates([]);
+        var result = await repository.GetByStates([], CancellationToken.None);
 
         Assert.Empty(result);
     }

@@ -60,7 +60,7 @@ public class DocumentContentsRepositoryTests
         var documentId = Guid.NewGuid();
         var content = CreateContent(documentId);
 
-        await repository.AddAsync(content);
+        await repository.AddAsync(content, CancellationToken.None);
 
         var entity = await context.DocumentContents.SingleAsync();
         Assert.Equal(content.Id, entity.Id);
@@ -78,10 +78,10 @@ public class DocumentContentsRepositoryTests
         var second = CreateEntity(documentId, "Second content");
         var other = CreateEntity(otherDocumentId, "Other content");
         await context.DocumentContents.AddRangeAsync(first, second, other);
-        await context.SaveAsync();
+        await context.SaveAsync(CancellationToken.None);
         var repository = CreateRepository(context);
 
-        var result = await repository.GetByDocumentIdAsync(documentId);
+        var result = await repository.GetByDocumentIdAsync(documentId, CancellationToken.None);
 
         Assert.Equal(2, result.Count);
         Assert.Contains(result, i => i.Id == first.Id && i.DocumentId == documentId && i.Content == first.Content);
@@ -94,10 +94,10 @@ public class DocumentContentsRepositoryTests
     {
         await using var context = CreateContext();
         await context.DocumentContents.AddAsync(CreateEntity(Guid.NewGuid()));
-        await context.SaveAsync();
+        await context.SaveAsync(CancellationToken.None);
         var repository = CreateRepository(context);
 
-        var result = await repository.GetByDocumentIdAsync(Guid.NewGuid());
+        var result = await repository.GetByDocumentIdAsync(Guid.NewGuid(), CancellationToken.None);
 
         Assert.Empty(result);
     }
