@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="PdfProcessing.Data/PdfProcessing.Data.csproj" />
   <Project Path="PdfProcessing.Domain/PdfProcessing.Domain.csproj" />
 </Solution>
