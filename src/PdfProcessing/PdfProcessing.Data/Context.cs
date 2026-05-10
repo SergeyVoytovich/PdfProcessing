@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace PdfProcessing.Data.Entities;
 
@@ -27,5 +28,46 @@ internal class Context : DbContext
 			.HasForeignKey(i => i.DocumentId)
 			.OnDelete(DeleteBehavior.Cascade)
 			;
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+		var entities = ChangeTracker.Entries<EntityBase>();
+		await ProvideAuditAsync(entities);
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+	protected virtual async Task ProvideAuditAsync(IEnumerable<EntityEntry<EntityBase>> entires)
+	{
+		foreach (var entiry in entires)
+		{
+			await ProvideAuditAsync(entiry);
+        }
+    }
+
+    protected virtual async Task ProvideAuditAsync(EntityEntry<EntityBase> entry)
+    {
+        var now = DateTime.UtcNow;
+		var user = "system"; // temp solution
+
+		if(entry.State == EntityState.Added)
+		{
+			entry.Entity.CreateBy = user;
+			entry.Entity.CreatedAt = now;
+        }
+
+        if (entry.State == EntityState.Modified)
+		{
+			entry.Entity.UpdatedBy = user;
+			entry.Entity.UpdatedAt = now;
+        }
+
+        if(entry.State == EntityState.Added)
+		{
+			entry.State = EntityState.Modified;
+			entry.Entity.DeletedBy = user;
+			entry.Entity.DeletedAt = now;
+        }
     }
 }
