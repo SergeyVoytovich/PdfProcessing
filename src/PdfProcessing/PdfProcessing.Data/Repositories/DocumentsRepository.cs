@@ -30,6 +30,7 @@ internal class DocumentsRepository(IContext context, IMapper mapper)
 
     public Task<IList<Document>> GetByStates(IList<DocumentState> states)
         => Context.Documents
+                .AsNoTracking()
                 .Where(i => states.Select(s => (int)s).Contains(i.State))
                 .ToListAsync()
                 .MapAsync<DocumentEntity, Document>(Mapper);
