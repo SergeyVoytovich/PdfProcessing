@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddPdfProcessingData(this IServiceCollection services, Action<DbContextOptionsBuilder> options)
         => services.AddDbContext<Context>(options)
+                .AddScoped<IContext>(p => p.GetRequiredService<Context>())
                 .AddScoped<IDocumentsRepository, DocumentsRepository>()
                 .AddScoped<IDocumentContentsRepository, DocumentContentsRepository>()
                 .AddAutoMapper(cnf => 

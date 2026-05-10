@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using PdfProcessing.Data.Entities;
 
-namespace PdfProcessing.Data.Entities;
+namespace PdfProcessing.Data;
 
 internal class Context : DbContext, IContext
 {

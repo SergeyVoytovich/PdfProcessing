@@ -1,3 +1,6 @@
+using PdfProcessing.Api.Configuration;
+using PdfProcessing.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Custom services
+builder.Services.AddPdfProcessingDataToNpsql(builder.Configuration.PdfStorage());
 
 var app = builder.Build();
 
