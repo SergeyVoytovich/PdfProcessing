@@ -12,7 +12,7 @@ internal class DocumentsService(IStorage storage, IMapper mapper) : IDocumentsSe
 
 
 
-    public async Task<IList<DocumentDto>> GetDocumentsAsync(CancellationToken cancellationToken = default)
+    public async Task<IList<DocumentDto>> GetAsync(CancellationToken cancellationToken = default)
     {
         var documents = await Storage.Documents.GetByStates([DocumentState.Received, DocumentState.Processing, DocumentState.Processed], cancellationToken);
         return Mapper.Map<IList<DocumentDto>>(documents);

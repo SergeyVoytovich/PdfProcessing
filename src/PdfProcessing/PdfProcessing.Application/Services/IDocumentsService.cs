@@ -4,5 +4,5 @@ namespace PdfProcessing.Application.Services;
 
 public interface IDocumentsService
 {
-    public Task<IList<DocumentDto>> GetDocumentsAsync(CancellationToken cancellationToken = default);
+    public Task<IList<DocumentDto>> GetAsync(CancellationToken cancellationToken = default);
 }

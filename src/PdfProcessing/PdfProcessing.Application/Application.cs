@@ -8,5 +8,5 @@ internal class Application(IServiceProvider services) : IApplication
 
     private readonly Lazy<IDocumentsService> _documentsService = new(() => throw new NotImplementedException());
 
-    public IDocumentsService DocumentsService => _documentsService.Value;
+    public IDocumentsService Documents => _documentsService.Value;
 }

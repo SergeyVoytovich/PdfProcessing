@@ -4,5 +4,5 @@ namespace PdfProcessing.Application;
 
 public interface IApplication
 {
-    public IDocumentsService DocumentsService { get; }
+    public IDocumentsService Documents { get; }
 }
