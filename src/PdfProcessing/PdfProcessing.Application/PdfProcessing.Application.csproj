@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PdfProcessing.Domain\PdfProcessing.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
