@@ -1,0 +1,137 @@
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
+using PdfProcessing.Data.Entities;
+using PdfProcessing.Data.Mapping;
+using PdfProcessing.Data.Repositories;
+using PdfProcessing.Domain;
+
+namespace PdfProcessing.Data.UnitTests.Repositories;
+
+public class CrudRepositoryBaseTests
+{
+    private sealed class TestCrudRepository(Context context, IMapper mapper)
+        : CrudRepositoryBase<Document, DocumentEntity>(context, mapper, c => c.Documents)
+    {
+        public Task Add(Document document) => AddAsync(document);
+
+        public Task Update(Document document) => UpdateAsync(document);
+
+        public Task Delete(Guid id) => DeleteAsync(id);
+    }
+
+    private static IMapper CreateMapper()
+    {
+        var configuration = new MapperConfiguration(
+            cfg =>
+            {
+                cfg.AddProfile<GeneralProfile>();
+                cfg.AddProfile<DocumentsProfile>();
+            },
+            NullLoggerFactory.Instance);
+
+        return configuration.CreateMapper();
+    }
+
+    private static Context CreateContext()
+    {
+        var options = new DbContextOptionsBuilder<Context>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        return new Context(options);
+    }
+
+    private static TestCrudRepository CreateRepository(Context context)
+        => new(context, CreateMapper());
+
+    private static Document CreateDocument(DocumentState state = DocumentState.Received)
+        => new()
+        {
+            Id = Guid.NewGuid(),
+            DisplayName = "document.pdf",
+            FilePath = "documents/document.pdf",
+            State = state
+        };
+
+    private static DocumentEntity CreateEntity(DocumentState state = DocumentState.Received)
+        => new()
+        {
+            Id = Guid.NewGuid(),
+            DisplayName = "entity.pdf",
+            FilePath = "documents/entity.pdf",
+            State = (int)state
+        };
+
+    [Fact]
+    public async Task AddAsync_AddsMappedEntity()
+    {
+        await using var context = CreateContext();
+        var repository = CreateRepository(context);
+        var document = CreateDocument(DocumentState.Processing);
+
+        await repository.Add(document);
+
+        var entity = await context.Documents.SingleAsync();
+        Assert.Equal(document.Id, entity.Id);
+        Assert.Equal(document.DisplayName, entity.DisplayName);
+        Assert.Equal(document.FilePath, entity.FilePath);
+        Assert.Equal((int)document.State, entity.State);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenEntityExists_UpdatesMappedEntity()
+    {
+        await using var context = CreateContext();
+        var entity = CreateEntity(DocumentState.Received);
+        await context.Documents.AddAsync(entity);
+        await context.SaveAsync();
+        var repository = CreateRepository(context);
+        var document = new Document
+        {
+            Id = entity.Id,
+            DisplayName = "updated.pdf",
+            FilePath = "documents/updated.pdf",
+            State = DocumentState.Processed
+        };
+
+        await repository.Update(document);
+
+        var updated = await context.Documents.SingleAsync(i => i.Id == entity.Id);
+        Assert.Equal(document.DisplayName, updated.DisplayName);
+        Assert.Equal(document.FilePath, updated.FilePath);
+        Assert.Equal((int)document.State, updated.State);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_WhenEntityDoesNotExist_ThrowsEntityNotFoundException()
+    {
+        await using var context = CreateContext();
+        var repository = CreateRepository(context);
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => repository.Update(CreateDocument()));
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WhenEntityExists_RemovesEntity()
+    {
+        await using var context = CreateContext();
+        var entity = CreateEntity();
+        await context.Documents.AddAsync(entity);
+        await context.SaveAsync();
+        var repository = CreateRepository(context);
+
+        await repository.Delete(entity.Id);
+
+        Assert.Empty(await context.Documents.ToListAsync());
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WhenEntityDoesNotExist_ThrowsEntityNotFoundException()
+    {
+        await using var context = CreateContext();
+        var repository = CreateRepository(context);
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => repository.Delete(Guid.NewGuid()));
+    }
+}

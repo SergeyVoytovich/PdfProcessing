@@ -6,25 +6,8 @@ using PdfProcessing.Domain;
 
 namespace PdfProcessing.Data.Repositories;
 
-internal class DocumentsRepository : RepositoryBase<Document, DocumentEntity>, IDocumentsRepository
+internal class DocumentsRepository(IContext context, IMapper mapper) : CrudRepositoryBase<Document, DocumentEntity>(context, mapper, c => c.Documents), IDocumentsRepository
 {
-    public DocumentsRepository(IContext context, IMapper mapper) : base(context, mapper)
-    {
-    }
-
-    public async Task AddAsync(Document document)
-    {
-        var entity = Mapper.Map<DocumentEntity>(document);
-
-        await Context.Documents.AddAsync(entity);
-        await Context.SaveAsync();
-    }
-
-    public Task DeleteAsync(Guid Id)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<IList<Document>> GetAllAsync()
     {
         var entities = await Context.Documents.ToListAsync();
@@ -43,11 +26,9 @@ internal class DocumentsRepository : RepositoryBase<Document, DocumentEntity>, I
         return Mapper.Map<IList<Document>>(entities);
     }
 
-    public async Task UpdateAsync(Document document)
-    {
-        var entity = await Context.Documents.ById(document.Id).SingleOrDefaultAsync() ?? throw new EntityNotFoundException(document.Id);
-        entity = Mapper.Map(document, entity);
+    Task IDocumentsRepository.AddAsync(Document document) => base.AddAsync(document);
 
-        await Context.SaveAsync();
-    }
+    Task IDocumentsRepository.UpdateAsync(Document document) => base.UpdateAsync(document);
+
+    Task IDocumentsRepository.DeleteAsync(Guid id) => base.DeleteAsync(id);
 }

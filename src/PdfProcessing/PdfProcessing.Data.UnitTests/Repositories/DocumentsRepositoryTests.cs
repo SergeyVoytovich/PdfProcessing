@@ -35,15 +35,6 @@ public class DocumentsRepositoryTests
     private static DocumentsRepository CreateRepository(Context context)
         => new(context, CreateMapper());
 
-    private static Document CreateDocument(DocumentState state = DocumentState.Received)
-        => new()
-        {
-            Id = Guid.NewGuid(),
-            DisplayName = "document.pdf",
-            FilePath = "documents/document.pdf",
-            State = state
-        };
-
     private static DocumentEntity CreateEntity(DocumentState state = DocumentState.Received)
         => new()
         {
@@ -52,22 +43,6 @@ public class DocumentsRepositoryTests
             FilePath = "documents/entity.pdf",
             State = (int)state
         };
-
-    [Fact]
-    public async Task AddAsync_AddsDocument()
-    {
-        await using var context = CreateContext();
-        var repository = CreateRepository(context);
-        var document = CreateDocument(DocumentState.Processing);
-
-        await repository.AddAsync(document);
-
-        var entity = await context.Documents.SingleAsync();
-        Assert.Equal(document.Id, entity.Id);
-        Assert.Equal(document.DisplayName, entity.DisplayName);
-        Assert.Equal(document.FilePath, entity.FilePath);
-        Assert.Equal((int)document.State, entity.State);
-    }
 
     [Fact]
     public async Task GetAllAsync_ReturnsAllDocuments()
@@ -129,48 +104,5 @@ public class DocumentsRepositoryTests
         var document = Assert.Single(result);
         Assert.Equal(processed.Id, document.Id);
         Assert.Equal(DocumentState.Processed, document.State);
-    }
-
-    [Fact]
-    public async Task UpdateAsync_WhenDocumentExists_UpdatesDocument()
-    {
-        await using var context = CreateContext();
-        var entity = CreateEntity(DocumentState.Received);
-        await context.Documents.AddAsync(entity);
-        await context.SaveAsync();
-        var repository = CreateRepository(context);
-        var document = new Document
-        {
-            Id = entity.Id,
-            DisplayName = "updated.pdf",
-            FilePath = "documents/updated.pdf",
-            State = DocumentState.Processed
-        };
-
-        await repository.UpdateAsync(document);
-
-        var updated = await context.Documents.SingleAsync(i => i.Id == entity.Id);
-        Assert.Equal(document.DisplayName, updated.DisplayName);
-        Assert.Equal(document.FilePath, updated.FilePath);
-        Assert.Equal((int)document.State, updated.State);
-    }
-
-    [Fact]
-    public async Task UpdateAsync_WhenDocumentDoesNotExist_ThrowsEntityNotFoundException()
-    {
-        await using var context = CreateContext();
-        var repository = CreateRepository(context);
-        var document = CreateDocument();
-
-        await Assert.ThrowsAsync<EntityNotFoundException>(() => repository.UpdateAsync(document));
-    }
-
-    [Fact]
-    public async Task DeleteAsync_ThrowsNotImplementedException()
-    {
-        await using var context = CreateContext();
-        var repository = CreateRepository(context);
-
-        await Assert.ThrowsAsync<NotImplementedException>(() => repository.DeleteAsync(Guid.NewGuid()));
     }
 }
