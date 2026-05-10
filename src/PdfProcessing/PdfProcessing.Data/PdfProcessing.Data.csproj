@@ -21,11 +21,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\PdfProcessing.Application\PdfProcessing.Application.csproj" />
-		<ProjectReference Include="..\PdfProcessing.Domain\PdfProcessing.Domain.csproj" />
+		<InternalsVisibleTo Include="PdfProcessing.Data.UnitTests" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="PdfProcessing.Data.UnitTests" />
+	  <ProjectReference Include="..\PdfProcessing.Core\PdfProcessing.Core.csproj" />
 	</ItemGroup>
 </Project>

@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PdfProcessing.Core\PdfProcessing.Core.csproj" />
     <ProjectReference Include="..\PdfProcessing.Data\PdfProcessing.Data.csproj" />
-    <ProjectReference Include="..\PdfProcessing.Domain\PdfProcessing.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
