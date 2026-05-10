@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using PdfProcessing.Application.Data;
 using PdfProcessing.Application.Data.Repositories;
 using PdfProcessing.Data.Mapping;
 using PdfProcessing.Data.Repositories;
@@ -11,9 +12,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddPdfProcessingData(this IServiceCollection services, Action<DbContextOptionsBuilder> options)
         => services.AddDbContext<Context>(options)
                 .AddScoped<IContext>(p => p.GetRequiredService<Context>())
+                .AddScoped<IStorage, Storage>()
                 .AddScoped<IDocumentsRepository, DocumentsRepository>()
                 .AddScoped<IDocumentContentsRepository, DocumentContentsRepository>()
-                .AddAutoMapper(cnf => 
+                .AddAutoMapper(cnf =>
                 {
                     cnf.AddProfile<GeneralProfile>();
                     cnf.AddProfile<DocumentsProfile>();
