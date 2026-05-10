@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace PdfProcessing.Data.Entities;
 
-internal class Context : DbContext
+internal class Context : DbContext, IContext
 {
 	#region DbSets
 
@@ -70,4 +70,6 @@ internal class Context : DbContext
 			entry.Entity.DeletedAt = now;
         }
     }
+
+	public Task SaveAsync() => base.SaveChangesAsync();
 }
