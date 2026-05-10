@@ -13,5 +13,4 @@ public interface IDocumentContentsRepository
     Task<DocumentContent> GetByDocumentIdAsync(Guid documentId);
 
     Task AddAsync(Document document);
-    Task DeleteAsync(Guid Id);
 }
