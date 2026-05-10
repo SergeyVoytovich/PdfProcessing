@@ -45,23 +45,6 @@ public class DocumentsRepositoryTests
         };
 
     [Fact]
-    public async Task GetAllAsync_ReturnsAllDocuments()
-    {
-        await using var context = CreateContext();
-        var first = CreateEntity(DocumentState.Received);
-        var second = CreateEntity(DocumentState.Processed);
-        await context.Documents.AddRangeAsync(first, second);
-        await context.SaveAsync();
-        var repository = CreateRepository(context);
-
-        var result = await repository.GetAllAsync();
-
-        Assert.Equal(2, result.Count);
-        Assert.Contains(result, i => i.Id == first.Id);
-        Assert.Contains(result, i => i.Id == second.Id);
-    }
-
-    [Fact]
     public async Task GetByIdAsync_WhenDocumentExists_ReturnsDocument()
     {
         await using var context = CreateContext();
@@ -104,5 +87,37 @@ public class DocumentsRepositoryTests
         var document = Assert.Single(result);
         Assert.Equal(processed.Id, document.Id);
         Assert.Equal(DocumentState.Processed, document.State);
+    }
+
+    [Fact]
+    public async Task GetByStates_ReturnsOnlyDocumentsWithRequestedStates()
+    {
+        await using var context = CreateContext();
+        var received = CreateEntity(DocumentState.Received);
+        var processed = CreateEntity(DocumentState.Processed);
+        var failed = CreateEntity(DocumentState.Failed);
+        await context.Documents.AddRangeAsync(received, processed, failed);
+        await context.SaveAsync();
+        var repository = CreateRepository(context);
+
+        var result = await repository.GetByStates([DocumentState.Received, DocumentState.Processed]);
+
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, i => i.Id == received.Id && i.State == DocumentState.Received);
+        Assert.Contains(result, i => i.Id == processed.Id && i.State == DocumentState.Processed);
+        Assert.DoesNotContain(result, i => i.Id == failed.Id);
+    }
+
+    [Fact]
+    public async Task GetByStates_WhenStatesEmpty_ReturnsEmptyList()
+    {
+        await using var context = CreateContext();
+        await context.Documents.AddAsync(CreateEntity(DocumentState.Processed));
+        await context.SaveAsync();
+        var repository = CreateRepository(context);
+
+        var result = await repository.GetByStates([]);
+
+        Assert.Empty(result);
     }
 }

@@ -1,7 +1,9 @@
 <Solution>
+  <Folder Name="/Data/">
+    <Project Path="PdfProcessing.Data.UnitTests/PdfProcessing.Data.UnitTests.csproj" />
+    <Project Path="PdfProcessing.Data/PdfProcessing.Data.csproj" />
+  </Folder>
   <Project Path="PdfProcessing.Api/PdfProcessing.Api.csproj" Id="ab51fa09-ec58-4954-810b-023ac9597cb9" />
   <Project Path="PdfProcessing.Application/PdfProcessing.Application.csproj" />
-  <Project Path="PdfProcessing.Data.UnitTests/PdfProcessing.Data.UnitTests.csproj" />
-  <Project Path="PdfProcessing.Data/PdfProcessing.Data.csproj" />
   <Project Path="PdfProcessing.Domain/PdfProcessing.Domain.csproj" />
 </Solution>

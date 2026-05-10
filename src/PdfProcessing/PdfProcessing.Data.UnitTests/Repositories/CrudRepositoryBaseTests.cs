@@ -113,7 +113,7 @@ public class CrudRepositoryBaseTests
     }
 
     [Fact]
-    public async Task DeleteAsync_WhenEntityExists_RemovesEntity()
+    public async Task DeleteAsync_WhenEntityExists_MarksEntityAsDeleted()
     {
         await using var context = CreateContext();
         var entity = CreateEntity();
@@ -123,7 +123,9 @@ public class CrudRepositoryBaseTests
 
         await repository.Delete(entity.Id);
 
-        Assert.Empty(await context.Documents.ToListAsync());
+        var deleted = await context.Documents.SingleAsync(i => i.Id == entity.Id);
+        Assert.NotNull(deleted.DeletedAt);
+        Assert.Equal("system", deleted.DeletedBy);
     }
 
     [Fact]

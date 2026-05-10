@@ -84,8 +84,8 @@ public class DocumentContentsRepositoryTests
         var result = await repository.GetByDocumentIdAsync(documentId);
 
         Assert.Equal(2, result.Count);
-        Assert.Contains(result, i => i.Id == first.Id && i.Content == first.Content);
-        Assert.Contains(result, i => i.Id == second.Id && i.Content == second.Content);
+        Assert.Contains(result, i => i.Id == first.Id && i.DocumentId == documentId && i.Content == first.Content);
+        Assert.Contains(result, i => i.Id == second.Id && i.DocumentId == documentId && i.Content == second.Content);
         Assert.DoesNotContain(result, i => i.Id == other.Id);
     }
 

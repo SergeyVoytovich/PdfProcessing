@@ -11,8 +11,8 @@ namespace PdfProcessing.Application.Data.Repositories;
 public interface IDocumentsRepository
 {
     Task<Document> GetByIdAsync(Guid Id);
-    Task<IList<Document>> GetAllAsync();
     Task<IList<Document>> GetByState(DocumentState state);
+    Task<IList<Document>> GetByStates(IList<DocumentState> states);
 
     Task AddAsync(Document document);
     Task UpdateAsync(Document document);
