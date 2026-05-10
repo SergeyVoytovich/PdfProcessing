@@ -6,7 +6,8 @@ using PdfProcessing.Domain;
 
 namespace PdfProcessing.Data.Repositories;
 
-internal class DocumentsRepository(IContext context, IMapper mapper) : CrudRepositoryBase<Document, DocumentEntity>(context, mapper, c => c.Documents), IDocumentsRepository
+internal class DocumentsRepository(IContext context, IMapper mapper)
+    : CrudRepositoryBase<Document, DocumentEntity>(context, mapper, c => c.Documents) , IDocumentsRepository
 {
     public async Task<IList<Document>> GetAllAsync()
     {
