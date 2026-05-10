@@ -1,1 +1,3 @@
-<Solution />
+<Solution>
+  <Project Path="PdfProcessing.Domain/PdfProcessing.Domain.csproj" />
+</Solution>
