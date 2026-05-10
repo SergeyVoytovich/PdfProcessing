@@ -17,11 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PdfProcessing.Application\PdfProcessing.Application.csproj" />
     <ProjectReference Include="..\PdfProcessing.Data\PdfProcessing.Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

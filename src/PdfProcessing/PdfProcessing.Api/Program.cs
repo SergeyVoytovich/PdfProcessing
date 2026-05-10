@@ -1,4 +1,5 @@
 using PdfProcessing.Api.Configuration;
+using PdfProcessing.Application;
 using PdfProcessing.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 // Custom services
+builder.Services.AddPdfProcessingApplication();
 builder.Services.AddPdfProcessingDataToNpsql(builder.Configuration.PdfStorage());
 
 var app = builder.Build();
