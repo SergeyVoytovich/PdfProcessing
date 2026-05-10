@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="PdfProcessing.Application/PdfProcessing.Application.csproj" />
+  <Project Path="PdfProcessing.Data.UnitTests/PdfProcessing.Data.UnitTests.csproj" />
   <Project Path="PdfProcessing.Data/PdfProcessing.Data.csproj" />
   <Project Path="PdfProcessing.Domain/PdfProcessing.Domain.csproj" />
 </Solution>
