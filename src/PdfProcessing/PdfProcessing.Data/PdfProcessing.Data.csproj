@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PdfProcessing.Application\PdfProcessing.Application.csproj" />
     <ProjectReference Include="..\PdfProcessing.Domain\PdfProcessing.Domain.csproj" />
   </ItemGroup>
 

@@ -12,8 +12,9 @@ public interface IDocumentsRepository
 {
     Task<Document> GetByIdAsync(Guid Id);
     Task<IList<Document>> GetAllAsync();
+    Task<IList<Document>> GetByState(DocumentState state);
 
     Task AddAsync(Document document);
     Task UpdateAsync(Document document);
-    Task DeleteAsync(Guid Id);
+    Task DeleteAsync(Guid id);
 }

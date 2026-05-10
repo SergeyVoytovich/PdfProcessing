@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using PdfProcessing.Data.Entities;
+using PdfProcessing.Domain;
 
 namespace PdfProcessing.Data.Repositories;
 
 internal abstract class RepositoryBase<TDomain, TEntity>
+    where TDomain : DomainBase
+    where TEntity : EntityBase
 {
     protected IContext Context { get; }
     protected IMapper Mapper { get; }
