@@ -63,7 +63,7 @@ internal class Context : DbContext, IContext
 			entry.Entity.UpdatedAt = now;
         }
 
-        if(entry.State == EntityState.Added)
+        if(entry.State == EntityState.Deleted)
 		{
 			entry.State = EntityState.Modified;
 			entry.Entity.DeletedBy = user;
@@ -71,5 +71,5 @@ internal class Context : DbContext, IContext
         }
     }
 
-	public Task SaveAsync() => base.SaveChangesAsync();
+	public Task SaveAsync() => SaveChangesAsync();
 }
