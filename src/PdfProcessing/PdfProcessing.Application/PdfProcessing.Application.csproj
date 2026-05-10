@@ -10,4 +10,8 @@
     <ProjectReference Include="..\PdfProcessing.Domain\PdfProcessing.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
