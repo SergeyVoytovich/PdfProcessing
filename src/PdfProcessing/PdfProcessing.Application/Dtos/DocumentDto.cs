@@ -2,8 +2,11 @@
 
 namespace PdfProcessing.Api.Dtos;
 
-public record DocumentDto : DtoBase
+public record DocumentDto
 {
+    [JsonPropertyName("id")]
+    public Guid Id { get; set; }
+
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
