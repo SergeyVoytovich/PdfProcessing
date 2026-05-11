@@ -6,4 +6,5 @@
   <Project Path="PdfProcessing.Api/PdfProcessing.Api.csproj" Id="ab51fa09-ec58-4954-810b-023ac9597cb9" />
   <Project Path="PdfProcessing.Application/PdfProcessing.Application.csproj" />
   <Project Path="PdfProcessing.Core/PdfProcessing.Core.csproj" Id="64663aff-e0e9-415f-9d35-e795040544ce" />
+  <Project Path="PdfProcessing.Messaging/PdfProcessing.Messaging.csproj" Id="6d1ffccb-f0a9-4258-a68e-70c99390dc6b" />
 </Solution>
