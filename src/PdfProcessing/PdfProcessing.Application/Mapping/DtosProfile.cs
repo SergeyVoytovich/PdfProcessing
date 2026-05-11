@@ -16,6 +16,7 @@ internal class DtosProfile : Profile
 
         CreateMap<Document, DocumentContentDto>()
             .IncludeBase<Document, DocumentDto>()
+            .ForMember(dst => dst.Pages, opt => opt.Ignore())
             ;
 
         CreateMap<DocumentContent, PageContentDto>()
