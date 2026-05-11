@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using PdfProcessing.Application.Data;
 using PdfProcessing.Application.Dtos;
 using PdfProcessing.Data;
@@ -9,15 +10,20 @@ using PdfProcessing.Utilities;
 
 namespace PdfProcessing.Application.Services;
 
-internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus messageBus, IContentExtractor extractor) : IDocumentsService
+internal class DocumentsService
+    (IStorage storage, IMapper mapper, IMessageBus messageBus, IContentExtractor extractor, ILogger<DocumentsService> logger) //todo to many arguments -> move to environment
+    : IDocumentsService
 {
     protected virtual IStorage Storage { get; } = storage;
     protected virtual IMapper Mapper { get; } = mapper;
     protected virtual IMessageBus MessageBus { get; } = messageBus;
     protected virtual IContentExtractor Extractor { get; } = extractor;
+    protected virtual ILogger<DocumentsService> Logger { get; } = logger;
 
     public async Task<DocumentDto> AddAsync(string fileName, Stream stream, CancellationToken cancellationToken = default)
     {
+        Logger.LogInformation("Adding document {FileName}", fileName);
+
         if (string.IsNullOrWhiteSpace(fileName))
         {
             throw new ArgumentNullException(nameof(fileName));
@@ -43,6 +49,7 @@ internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus me
         };
 
         await Storage.Documents.AddAsync(document, cancellationToken);
+        //todo delete file if necessary
         await MessageBus.PublishAsync(new DocumentUploadedMessage { DocumentId = document.Id }, cancellationToken);
 
         return Mapper.Map<DocumentDto>(document);
@@ -86,6 +93,8 @@ internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus me
 
     public async Task ProcessAsync(Guid documentId, CancellationToken cancellationToken = default)
     {
+        Logger.LogInformation($"Processing document {documentId}");
+
         var document = await Storage.Documents.GetByIdAsync(documentId, cancellationToken);
         if(document is null)
         {
@@ -101,9 +110,13 @@ internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus me
 
             document.State = DocumentState.Processed;
             await Storage.Documents.UpdateAsync(document, cancellationToken);
+
+            Logger.LogInformation($"Document {documentId} processed successfully");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex, $"Error processing document {documentId}");
+
             document.State = DocumentState.Error;
             await Storage.Documents.UpdateAsync(document, cancellationToken);
             throw;
@@ -116,6 +129,7 @@ internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus me
         {
             if (cancellationToken.IsCancellationRequested)
             {
+                Logger.LogWarning($"Processing of document {document.Id} was cancelled");
                 return;
             }
 
