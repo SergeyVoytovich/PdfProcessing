@@ -1,7 +1,9 @@
-﻿namespace PdfProcessing.Messaging;
+﻿using PdfProcessing.Messaging.Messages;
 
-internal interface IMessageBus
+namespace PdfProcessing.Messaging;
+
+public interface IMessageBus
 {
-    Task PublishAsync<T>(T message, CancellationToken cancellation = default);
-    Task Subscribe<T>(Func<T, CancellationToken, Task> handler);
+    Task PublishAsync<T>(T message, CancellationToken cancellation = default) where T : IMessage;
+    Task Subscribe<T>(Func<T, CancellationToken, Task> handler) where T : IMessage;
 }
