@@ -69,12 +69,13 @@ internal class Context : DbContext, IContext
 			entry.Entity.UpdatedAt = now;
         }
 
-        if(entry.State == EntityState.Deleted)
-		{
-			entry.State = EntityState.Modified;
-			entry.Entity.DeletedBy = user;
-			entry.Entity.DeletedAt = now;
-        }
+		//todo add for soft delete
+  //      if(entry.State == EntityState.Deleted)
+		//{
+		//	entry.State = EntityState.Modified;
+		//	entry.Entity.DeletedBy = user;
+		//	entry.Entity.DeletedAt = now;
+  //      }
     }
 
 	public Task SaveAsync(CancellationToken cancellationToken) => SaveChangesAsync(cancellationToken);

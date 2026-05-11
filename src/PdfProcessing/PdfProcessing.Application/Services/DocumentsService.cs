@@ -115,7 +115,7 @@ internal class DocumentsService
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, $"Error processing document {documentId}");
+            Logger.LogError(ex, $"Error processing document {documentId}");
 
             document.State = DocumentState.Error;
             await Storage.Documents.UpdateAsync(document, cancellationToken);
@@ -125,12 +125,12 @@ internal class DocumentsService
 
     protected virtual async Task AddDocumentContentsAsync(Document document, CancellationToken cancellationToken = default)
     {
-        foreach (var content in await Extractor.ExtractAsync(document.FilePath))
+        foreach (var content in await Extractor.ExtractAsync(document.FilePath, cancellationToken))
         {
             if (cancellationToken.IsCancellationRequested)
             {
                 Logger.LogWarning($"Processing of document {document.Id} was cancelled");
-                return;
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             content.DocumentId = document.Id;
