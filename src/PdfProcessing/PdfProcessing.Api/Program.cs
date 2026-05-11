@@ -1,3 +1,4 @@
+using PdfProcessing.Api.Background;
 using PdfProcessing.Api.Configuration;
 using PdfProcessing.Application;
 using PdfProcessing.Data;
@@ -15,6 +16,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddPdfProcessingApplication();
 builder.Services.AddPdfProcessingDataToNpsql(builder.Configuration.PdfStorage());
 builder.Services.AddPdfProcessingMessaging(builder.Configuration.MessagingConfiguration());
+builder.Services.AddHostedService<DocumentUploadConsumer>();
 
 // swagger
 builder.Services.AddEndpointsApiExplorer();

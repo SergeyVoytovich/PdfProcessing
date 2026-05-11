@@ -82,5 +82,8 @@ internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus me
         return Mapper.Map<IList<DocumentDto>>(documents);
     }
 
-
+    public Task ProcessAsync(Guid documentId, CancellationToken cancellationToken = default)
+    {
+        return Task.CompletedTask;
+    }
 }
