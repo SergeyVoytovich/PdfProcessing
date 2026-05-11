@@ -275,7 +275,8 @@ public class DocumentsServiceTests
         dependencies.Extractor.ExtractAsync(document.FilePath, Arg.Any<CancellationToken>())
             .Returns([new DocumentContent { PageNumber = 1, Content = "Page 1" }]);
 
-        await service.AddDocumentContents(document, cancellation.Token);
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            () => service.AddDocumentContents(document, cancellation.Token));
 
         await dependencies.DocumentContents.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
