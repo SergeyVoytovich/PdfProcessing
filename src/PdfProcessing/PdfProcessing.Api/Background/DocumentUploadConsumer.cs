@@ -15,10 +15,10 @@ public class DocumentUploadConsumer(IMessageBus messageBus, IServiceScopeFactory
         await MessageBus.SubscribeAsync<DocumentUploadedMessage>( HandleDocumentUploadedMessageAsync, stoppingToken);
     }
 
-    protected virtual Task HandleDocumentUploadedMessageAsync(DocumentUploadedMessage message, CancellationToken cancellationToken)
+    protected virtual async Task HandleDocumentUploadedMessageAsync(DocumentUploadedMessage message, CancellationToken cancellationToken)
     {
         using var scope = ServiceFactory.CreateScope();
         var application = scope.ServiceProvider.GetRequiredService<IApplication>();
-        return application.Documents.ProcessAsync(message.DocumentId, cancellationToken);
+        await application.Documents.ProcessAsync(message.DocumentId, cancellationToken);
     }
 }
