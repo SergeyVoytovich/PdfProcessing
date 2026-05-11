@@ -12,5 +12,8 @@ internal record DocumentContentEntity : EntityBase
     [ForeignKey(nameof(DocumentId))]
     public DocumentEntity Document { get; set; } = null!;
 
+    [Required]
+    public int PageNumber { get; set; }
+
     public string? Content { get; set; } = string.Empty;
 }
