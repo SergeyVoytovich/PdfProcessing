@@ -7,5 +7,6 @@ public static class Routes
     public static class Documents
     {
         public const string Base = $"{Routes.Base}/documents";
+        public const string Content = $"{{id}}";
     }
 }

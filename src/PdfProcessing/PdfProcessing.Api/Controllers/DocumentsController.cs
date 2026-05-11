@@ -16,6 +16,20 @@ public class DocumentsController(IApplication application) : AppControllerBase(a
         return Ok(result);
     }
 
+    [HttpGet]
+    [Route(Routes.Documents.Content)]
+    [ProducesResponseType(typeof(DocumentContentDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<DocumentContentDto>> Get(Guid id, CancellationToken cancellationToken)
+    {
+        if(id == Guid.Empty)
+        {
+            return BadRequest();
+        }
+
+        var result = await Application.Documents.GetContentAsync(id, cancellationToken);
+        return result is null ? NotFound() : Ok(result);
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(DocumentDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<DocumentDto>> Post(IFormFile file, CancellationToken cancellationToken)

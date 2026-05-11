@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace PdfProcessing.Data.Repositories;
+﻿namespace PdfProcessing.Data.Repositories;
 
 public class EntityNotFoundException : Exception
 {
@@ -19,10 +17,6 @@ public class EntityNotFoundException : Exception
     }
 
     public EntityNotFoundException(string? message, Exception? innerException) : base(message, innerException)
-    {
-    }
-
-    protected EntityNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
 }
