@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace PdfProcessing.Api.Dtos;
+namespace PdfProcessing.Application.Dtos;
 
 public record DocumentDto
 {

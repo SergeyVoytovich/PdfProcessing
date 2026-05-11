@@ -1,5 +1,4 @@
-﻿using PdfProcessing.Api.Dtos;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace PdfProcessing.Application.Dtos;
 

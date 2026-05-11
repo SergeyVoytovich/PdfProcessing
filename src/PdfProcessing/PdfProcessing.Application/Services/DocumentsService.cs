@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using PdfProcessing.Api.Dtos;
 using PdfProcessing.Application.Data;
+using PdfProcessing.Application.Dtos;
 using PdfProcessing.Data;
 using PdfProcessing.Domain;
 
@@ -42,9 +42,41 @@ internal class DocumentsService(IStorage storage, IMapper mapper) : IDocumentsSe
         return Mapper.Map<DocumentDto>(document);
     }
 
+    public async Task<DocumentContentDto?> GetContentAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        if(id == Guid.Empty)
+        {
+            throw new ArgumentException("Id cannot be empty.", nameof(id));
+        }
+
+        var document = await Storage.Documents.GetByIdAsync(id, cancellationToken);
+        if (document is null)
+        {
+            return null;
+        }
+
+        var result = Mapper.Map<DocumentContentDto>(document);
+
+        if(document.State == DocumentState.Processed)
+        {
+            result.Pages = await GetPagesAsync(document.Id, cancellationToken);
+        }
+
+        return result;
+    }
+
+    protected virtual async Task<IList<PageContentDto>> GetPagesAsync(Guid docuemtnId, CancellationToken cancellationToken = default)
+    {
+        var contents = await Storage.DocumentContents.GetByDocumentIdAsync(docuemtnId, cancellationToken);
+        return Mapper.Map<IList<PageContentDto>>(contents);
+    }
+
+
     public async Task<IList<DocumentDto>> GetAsync(CancellationToken cancellationToken = default)
     {
         var documents = await Storage.Documents.GetByStates([DocumentState.Received, DocumentState.Processing, DocumentState.Processed], cancellationToken);
         return Mapper.Map<IList<DocumentDto>>(documents);
     }
+
+    
 }

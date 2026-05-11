@@ -10,11 +10,11 @@ namespace PdfProcessing.Data.Repositories;
 internal class DocumentsRepository(IContext context, IMapper mapper)
     : CrudRepositoryBase<Document, DocumentEntity>(context, mapper, c => c.Documents), IDocumentsRepository
 {
-    public Task<Document> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<Document?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         => Context.Documents
                 .ById(id)
                 .SingleOrDefaultAsync(cancellationToken)
-                .MapAsync<DocumentEntity, Document>(Mapper);
+                .MapAsync<DocumentEntity, Document?>(Mapper);
 
     public Task<IList<Document>> GetByState(DocumentState state, CancellationToken cancellationToken = default) 
         => Context.Documents

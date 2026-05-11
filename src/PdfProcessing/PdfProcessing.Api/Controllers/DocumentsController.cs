@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PdfProcessing.Api.Dtos;
 using PdfProcessing.Api.Routing;
 using PdfProcessing.Application;
+using PdfProcessing.Application.Dtos;
 
 namespace PdfProcessing.Api.Controllers;
 
