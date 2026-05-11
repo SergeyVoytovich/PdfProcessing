@@ -17,6 +17,8 @@ public static class ServiceCollectionExtensions
                 Password = configuration.Password,
             };
             return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+
+
         });
         services.AddSingleton<IMessageBus, RabbitMqBus>();
         return services;

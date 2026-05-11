@@ -39,7 +39,7 @@ public class DocumentsController(IApplication application) : AppControllerBase(a
             return BadRequest("File is required.");
         }
 
-        var result = await Application.Documents.AddAscyn(file.FileName, file.OpenReadStream(), cancellationToken);
+        var result = await Application.Documents.AddAsync(file.FileName, file.OpenReadStream(), cancellationToken);
         return Ok(result);
     }
 }

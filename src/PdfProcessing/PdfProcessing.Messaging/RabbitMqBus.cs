@@ -18,7 +18,7 @@ internal class RabbitMqBus : IMessageBus, IAsyncDisposable
 
     private async Task<IChannel> StartUpAsync()
     {
-        using var channel = await Connection.CreateChannelAsync();
+        var channel = await Connection.CreateChannelAsync();
         await channel.QueueDeclareAsync<DocumentUploadedMessage>();
         return channel;
     }

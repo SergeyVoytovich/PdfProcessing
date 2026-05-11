@@ -14,7 +14,7 @@ internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus me
     protected virtual IMapper Mapper { get; } = mapper;
     protected virtual IMessageBus MessageBus { get; } = messageBus;
 
-    public async Task<DocumentDto> AddAscyn(string fileName, Stream stream, CancellationToken cancellationToken = default)
+    public async Task<DocumentDto> AddAsync(string fileName, Stream stream, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
