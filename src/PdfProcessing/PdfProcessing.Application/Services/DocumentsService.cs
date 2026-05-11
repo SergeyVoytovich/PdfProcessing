@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PdfProcessing.Api.Dtos;
 using PdfProcessing.Application.Data;
+using PdfProcessing.Data;
 using PdfProcessing.Domain;
 
 namespace PdfProcessing.Application.Services;
@@ -12,6 +13,21 @@ internal class DocumentsService(IStorage storage, IMapper mapper) : IDocumentsSe
 
     public async Task<DocumentDto> AddAscyn(string fileName, Stream stream, CancellationToken cancellationToken = default)
     {
+        if(string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new ArgumentNullException(nameof(fileName));
+        }
+
+        if(stream is null)
+        {
+            throw new ArgumentNullException(nameof(stream));
+        }
+
+        if(!fileName.IsPdf())
+        {
+            throw new InvalidOperationException("Only PDF files are allowed.");
+        }
+
         var path = await Storage.Files.AddAsync(fileName, stream, cancellationToken);
         var document = new Document
         {

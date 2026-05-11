@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
         ;
 
     public static IServiceCollection AddPdfProcessingDataToNpsql(this IServiceCollection services, string connectionString)
-        => services.AddPdfProcessingDataToNpsql(connectionString, Directory.GetCurrentDirectory());
+        => services.AddPdfProcessingDataToNpsql(connectionString, Path.Combine(Directory.GetCurrentDirectory(), "Files")); //todo fix it for pruction
 
     public static IServiceCollection AddPdfProcessingDataToNpsql(this IServiceCollection services, string connectionString, string fileStoragePath)
         => services.AddPdfProcessingData(new DataConfig 
