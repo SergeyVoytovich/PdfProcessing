@@ -66,6 +66,7 @@ public class DocumentsProfileTests
         {
             Id = Guid.NewGuid(),
             DocumentId = Guid.NewGuid(),
+            PageNumber = 3,
             Content = "Document content"
         };
 
@@ -73,6 +74,7 @@ public class DocumentsProfileTests
 
         Assert.Equal(content.Id, result.Id);
         Assert.Equal(content.DocumentId, result.DocumentId);
+        Assert.Equal(content.PageNumber, result.PageNumber);
         Assert.Equal(content.Content, result.Content);
     }
 
@@ -83,6 +85,7 @@ public class DocumentsProfileTests
         {
             Id = Guid.NewGuid(),
             DocumentId = Guid.NewGuid(),
+            PageNumber = 5,
             Content = "Document content"
         };
 
@@ -90,6 +93,7 @@ public class DocumentsProfileTests
 
         Assert.Equal(entity.Id, result.Id);
         Assert.Equal(entity.DocumentId, result.DocumentId);
+        Assert.Equal(entity.PageNumber, result.PageNumber);
         Assert.Equal(entity.Content, result.Content);
     }
 

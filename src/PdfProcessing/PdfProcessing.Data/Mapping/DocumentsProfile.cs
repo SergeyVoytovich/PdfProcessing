@@ -19,6 +19,7 @@ internal class DocumentsProfile : Profile
         CreateMap<DocumentContent, DocumentContentEntity>()
            .IncludeBase<DomainBase, EntityBase>()
            .ForMember(dst => dst.DocumentId, opt => opt.MapFrom(src => src.DocumentId))
+           .ForMember(dst => dst.PageNumber, opt => opt.MapFrom(src => src.PageNumber))
            .ForMember(dst => dst.Content, opt => opt.MapFrom(src => src.Content))
            .ReverseMap()
            ;

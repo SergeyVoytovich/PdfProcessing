@@ -20,7 +20,7 @@ internal class DtosProfile : Profile
             ;
 
         CreateMap<DocumentContent, PageContentDto>()
-            //.ForMember(dst => dst.PageNumber, opt => opt.MapFrom(src => src.PageNumber))
+            .ForMember(dst => dst.PageNumber, opt => opt.MapFrom(src => src.PageNumber))
             .ForMember(dst => dst.TextContent, opt => opt.MapFrom(src => src.Content))
             ;
     }

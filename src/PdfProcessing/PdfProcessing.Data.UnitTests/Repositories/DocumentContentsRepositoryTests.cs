@@ -41,14 +41,16 @@ public class DocumentContentsRepositoryTests
         {
             Id = Guid.NewGuid(),
             DocumentId = documentId,
+            PageNumber = 1,
             Content = "Document content"
         };
 
-    private static DocumentContentEntity CreateEntity(Guid documentId, string content = "Document content")
+    private static DocumentContentEntity CreateEntity(Guid documentId, int pageNumber = 1, string content = "Document content")
         => new()
         {
             Id = Guid.NewGuid(),
             DocumentId = documentId,
+            PageNumber = pageNumber,
             Content = content
         };
 
@@ -65,6 +67,7 @@ public class DocumentContentsRepositoryTests
         var entity = await context.DocumentContents.SingleAsync();
         Assert.Equal(content.Id, entity.Id);
         Assert.Equal(content.DocumentId, entity.DocumentId);
+        Assert.Equal(content.PageNumber, entity.PageNumber);
         Assert.Equal(content.Content, entity.Content);
     }
 
@@ -74,9 +77,9 @@ public class DocumentContentsRepositoryTests
         await using var context = CreateContext();
         var documentId = Guid.NewGuid();
         var otherDocumentId = Guid.NewGuid();
-        var first = CreateEntity(documentId, "First content");
-        var second = CreateEntity(documentId, "Second content");
-        var other = CreateEntity(otherDocumentId, "Other content");
+        var first = CreateEntity(documentId, 1, "First content");
+        var second = CreateEntity(documentId, 2, "Second content");
+        var other = CreateEntity(otherDocumentId, 1, "Other content");
         await context.DocumentContents.AddRangeAsync(first, second, other);
         await context.SaveAsync(CancellationToken.None);
         var repository = CreateRepository(context);
@@ -84,8 +87,8 @@ public class DocumentContentsRepositoryTests
         var result = await repository.GetByDocumentIdAsync(documentId, CancellationToken.None);
 
         Assert.Equal(2, result.Count);
-        Assert.Contains(result, i => i.Id == first.Id && i.DocumentId == documentId && i.Content == first.Content);
-        Assert.Contains(result, i => i.Id == second.Id && i.DocumentId == documentId && i.Content == second.Content);
+        Assert.Contains(result, i => i.Id == first.Id && i.DocumentId == documentId && i.PageNumber == first.PageNumber && i.Content == first.Content);
+        Assert.Contains(result, i => i.Id == second.Id && i.DocumentId == documentId && i.PageNumber == second.PageNumber && i.Content == second.Content);
         Assert.DoesNotContain(result, i => i.Id == other.Id);
     }
 
