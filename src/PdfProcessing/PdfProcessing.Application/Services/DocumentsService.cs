@@ -3,27 +3,30 @@ using PdfProcessing.Application.Data;
 using PdfProcessing.Application.Dtos;
 using PdfProcessing.Data;
 using PdfProcessing.Domain;
+using PdfProcessing.Messaging;
+using PdfProcessing.Messaging.Contracts;
 
 namespace PdfProcessing.Application.Services;
 
-internal class DocumentsService(IStorage storage, IMapper mapper) : IDocumentsService
+internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus messageBus) : IDocumentsService
 {
     protected virtual IStorage Storage { get; } = storage;
     protected virtual IMapper Mapper { get; } = mapper;
+    protected virtual IMessageBus MessageBus { get; } = messageBus;
 
     public async Task<DocumentDto> AddAscyn(string fileName, Stream stream, CancellationToken cancellationToken = default)
     {
-        if(string.IsNullOrWhiteSpace(fileName))
+        if (string.IsNullOrWhiteSpace(fileName))
         {
             throw new ArgumentNullException(nameof(fileName));
         }
 
-        if(stream is null)
+        if (stream is null)
         {
             throw new ArgumentNullException(nameof(stream));
         }
 
-        if(!fileName.IsPdf())
+        if (!fileName.IsPdf())
         {
             throw new InvalidOperationException("Only PDF files are allowed.");
         }
@@ -38,13 +41,14 @@ internal class DocumentsService(IStorage storage, IMapper mapper) : IDocumentsSe
         };
 
         await Storage.Documents.AddAsync(document, cancellationToken);
+        await MessageBus.PublishAsync(new DocumentUploadedMessage { DocumentId = document.Id }, cancellationToken);
 
         return Mapper.Map<DocumentDto>(document);
     }
 
     public async Task<DocumentContentDto?> GetContentAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        if(id == Guid.Empty)
+        if (id == Guid.Empty)
         {
             throw new ArgumentException("Id cannot be empty.", nameof(id));
         }
@@ -57,7 +61,7 @@ internal class DocumentsService(IStorage storage, IMapper mapper) : IDocumentsSe
 
         var result = Mapper.Map<DocumentContentDto>(document);
 
-        if(document.State == DocumentState.Processed)
+        if (document.State == DocumentState.Processed)
         {
             result.Pages = await GetPagesAsync(document.Id, cancellationToken);
         }
@@ -78,5 +82,5 @@ internal class DocumentsService(IStorage storage, IMapper mapper) : IDocumentsSe
         return Mapper.Map<IList<DocumentDto>>(documents);
     }
 
-    
+
 }
