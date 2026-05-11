@@ -11,5 +11,7 @@ public enum DocumentState
     Processing,
     Processed,
 
+    Error = int.MaxValue - 1,
+
     Failed = int.MaxValue
 }

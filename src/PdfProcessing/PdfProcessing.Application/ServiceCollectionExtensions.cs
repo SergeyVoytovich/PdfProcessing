@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PdfProcessing.Application.Mapping;
 using PdfProcessing.Application.Services;
+using PdfProcessing.Application.Utilities;
+using PdfProcessing.Utilities;
 
 namespace PdfProcessing.Application;
 
@@ -11,5 +13,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<IDocumentsService, DocumentsService>()
             .AddScoped<IApplication, Application>()
             .AddAutoMapper(cnf => cnf.AddProfile<DtosProfile>())
+            .AddSingleton<IContentExtractor, ContentExtractor>()
         ;
 }

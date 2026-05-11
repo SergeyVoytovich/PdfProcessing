@@ -4,5 +4,5 @@ namespace PdfProcessing.Utilities;
 
 public interface IContentExtractor
 {
-    public Task<IList<DocumentContent>> ExtractAscyn(string filePath, CancellationToken cancellationToken = default);
+    public Task<IList<DocumentContent>> ExtractAsync(string filePath, CancellationToken cancellationToken = default);
 }

@@ -5,14 +5,16 @@ using PdfProcessing.Data;
 using PdfProcessing.Domain;
 using PdfProcessing.Messaging;
 using PdfProcessing.Messaging.Contracts;
+using PdfProcessing.Utilities;
 
 namespace PdfProcessing.Application.Services;
 
-internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus messageBus) : IDocumentsService
+internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus messageBus, IContentExtractor extractor) : IDocumentsService
 {
     protected virtual IStorage Storage { get; } = storage;
     protected virtual IMapper Mapper { get; } = mapper;
     protected virtual IMessageBus MessageBus { get; } = messageBus;
+    protected virtual IContentExtractor Extractor { get; } = extractor;
 
     public async Task<DocumentDto> AddAsync(string fileName, Stream stream, CancellationToken cancellationToken = default)
     {
@@ -92,5 +94,33 @@ internal class DocumentsService(IStorage storage, IMapper mapper, IMessageBus me
 
         document.State = DocumentState.Processing;
         await Storage.Documents.UpdateAsync(document, cancellationToken);
+
+        try
+        {
+            await AddDocumentContentsAsync(document, cancellationToken);
+
+            document.State = DocumentState.Processed;
+            await Storage.Documents.UpdateAsync(document, cancellationToken);
+        }
+        catch (Exception)
+        {
+            document.State = DocumentState.Error;
+            await Storage.Documents.UpdateAsync(document, cancellationToken);
+            throw;
+        }
+    }
+
+    protected virtual async Task AddDocumentContentsAsync(Document document, CancellationToken cancellationToken = default)
+    {
+        foreach (var content in await Extractor.ExtractAsync(document.FilePath))
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            content.DocumentId = document.Id;
+            await Storage.DocumentContents.AddAsync(content, cancellationToken);
+        }
     }
 }
